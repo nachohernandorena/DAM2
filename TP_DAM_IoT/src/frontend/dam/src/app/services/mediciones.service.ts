@@ -13,7 +13,7 @@ export class MedicionesService {
     return this._http.post('http://localhost:8000/mediciones/add',{fecha:mediciones.fecha.toISOString().slice(0, 19).replace('T', ' '),valor:mediciones.valor,dispositivoId:mediciones.dispositivoId}).toPromise().then((result)=>result);
    };
 
-   getMedicionByIdDispositivo(id: string): Promise<Mediciones> {
+  getMedicionByIdDispositivo(id: string): Promise<Mediciones> {
     return this._http.get<Mediciones>('http://localhost:8000/mediciones/' + id)
       .toPromise()
       .then((med: Mediciones | undefined) => {
