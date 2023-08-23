@@ -27,7 +27,7 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-button expand="block" shape="round"  routerLink="/dispositivos/{{dispositivoId}}">
+  <ion-button expand="block" shape="round"  (click)="goBack()">
     <ion-icon slot="end" name="arrow-back"></ion-icon>
   </ion-button>
   <ion-button expand="block" shape="round"  routerLink="/home">

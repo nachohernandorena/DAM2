@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Dispositivo: {{dispositivoId}} </ion-title>
+    <ion-title>Dispositivo: {{dispositivos.electrovalvulaId}} </ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -8,11 +8,11 @@
   <div id="highcharts" style="width:100%; height:300px;"></div>
   <br>
   <ion-button expand="block" shape="round" (click)="changeStatusValvula()"> 
-    <p *ngIf="!this.estadoValvula || this.onEVError"> Abrir Electroválvula</p>
-    <p *ngIf="this.estadoValvula" > Cerrar Electroválvula</p>
+    <p *ngIf="!this.statusValvula || this.onErrorEV"> Abrir Electroválvula</p>
+    <p *ngIf="this.statusValvula" > Cerrar Electroválvula</p>
   <ion-icon slot="start" name="power"></ion-icon>
 </ion-button>
-  <ion-button expand="block" shape="round" routerLink="/mediciones/{{dispositivoId}}" >
+  <ion-button expand="block" shape="round" routerLink="/mediciones/{{dispositivos.electrovalvulaId}}" >
       <p >Mediciones</p>
       <ion-icon slot="start" name="speedometer"></ion-icon>
   </ion-button>

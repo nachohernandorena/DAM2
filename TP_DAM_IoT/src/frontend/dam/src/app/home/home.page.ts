@@ -6,6 +6,7 @@ import { DispositivoService } from '../services/dispositivo.service';
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
+  
 })
 export class HomePage {
   listadoDispositivos: Dispositivos[]= []; 
@@ -17,7 +18,5 @@ export class HomePage {
     const listado = await this.dispositivoService.getListadoDispositivos();
     this.listadoDispositivos = listado;
   }
-
-
 }
 

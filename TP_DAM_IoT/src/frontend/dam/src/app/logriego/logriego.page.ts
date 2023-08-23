@@ -5,6 +5,7 @@ import { LogsService } from '../services/log-riego.service';
 import { Dispositivos } from '../interfaces/dispositivos';
 import { Logs } from '../interfaces/logRiegos';
 import { AperturaPipe } from '../pipes/apertura.pipe';
+import { Location } from '@angular/common';
 
 
 @Component({
@@ -19,12 +20,16 @@ export class LogriegoPage implements OnInit {
   public electrovalvulaId!: string;
   public onError!: boolean;
 
-  constructor(private router: ActivatedRoute, private dispService: DispositivoService, private lServ: LogsService) {}
+  constructor(private router: ActivatedRoute, private dispService: DispositivoService, private lServ: LogsService, private location: Location) {}
 
   ngOnInit() {
     this.getLogsData();
   }
 
+  goBack() {
+    this.location.back();
+  }
+  
   async getLogsData() {
     this.electrovalvulaId = this.router.snapshot.paramMap.get('id') || '';
     try {

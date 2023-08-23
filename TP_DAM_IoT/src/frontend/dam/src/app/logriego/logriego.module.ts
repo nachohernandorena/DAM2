@@ -5,6 +5,8 @@ import { IonicModule } from '@ionic/angular';
 import { LogriegoPageRoutingModule } from './logriego-routing.module';
 import { LogriegoPage } from './logriego.page';
 import { AperturaPipe } from '../pipes/apertura.pipe';
+import { MouseHoverDirective } from '../directives/mouse.directive';
+
 
 
 @NgModule({
@@ -14,6 +16,6 @@ import { AperturaPipe } from '../pipes/apertura.pipe';
     IonicModule,
     LogriegoPageRoutingModule
   ],
-  declarations: [LogriegoPage, AperturaPipe,]
+  declarations: [LogriegoPage, AperturaPipe, MouseHoverDirective]
 })
 export class LogriegoPageModule {}

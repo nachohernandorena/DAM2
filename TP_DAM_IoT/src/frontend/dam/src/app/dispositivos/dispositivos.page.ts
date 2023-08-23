@@ -20,24 +20,24 @@ require('highcharts/modules/solid-gauge')(Highcharts);
 })
 
 export class DispositivosPage implements OnInit {
+  public dispositivoId: string = '';
   public dispositivos: Dispositivos = new Dispositivos(0, '', '', 0);
-  public dispositivoId: string = '1';
-  public estadoValvula = false;
   public myChart: any;
   public mediciones!: Mediciones[]; 
+  public statusValvula = false;
   private chartOptions: any;
   private chartValue = 0;
   private chartName = '';
   public onError: boolean = false;
-  public onEVError: boolean= false;
+  public onErrorEV: boolean= false;
 
 
   constructor(
     private route: ActivatedRoute,
     private dispService: DispositivoService,
-    private medSrv: MedicionesService,
-    private lSrv: LogsService,
-    private evSrv: ElectrovalvulaService,
+    private medSer: MedicionesService,
+    private EVServ: ElectrovalvulaService,
+    private logServ: LogsService,
   ) {
 
   }
@@ -57,6 +57,7 @@ export class DispositivosPage implements OnInit {
 
   async getDispositivosData() {
     const dispositivoId = this.route.snapshot.paramMap.get('id');
+    console.log('Valor de dispositivoId:', dispositivoId);
     
  // Comprobamos si dispositivoId no es null
  if (dispositivoId !== null) {
@@ -68,11 +69,13 @@ export class DispositivosPage implements OnInit {
     this.dispositivos = dispositivos;
 
     // Obtener mediciones asociadas al dispositivo
-    const mediciones = await this.medSrv.getMediciones(dispositivoId);
+    const mediciones = await this.medSer.getMediciones(dispositivoId);
+    const lastMedicionIndex = mediciones.length - 1;
 
     if (mediciones) {
       this.mediciones = mediciones;
       this.chartName = String(this.dispositivos.nombre);
+      this.chartValue = mediciones[lastMedicionIndex].valor; 
       this.updateChart();
     } else {
       this.updateChart();
@@ -82,27 +85,27 @@ export class DispositivosPage implements OnInit {
   }
   // Intentar obtener el estado de la válvula
   try {
-    this.onEVError = false;
+    this.onErrorEV = false;
 
-    // Convertir el estado de la válvula a booleano y asignarlo a estadoValvula
-    this.estadoValvula = Boolean(await this.evSrv.getEstadoValvula(this.dispositivos.electrovalvulaId.toString()));
+    // Convertir el estado de la válvula a booleano y asignarlo astatusValvula
+    this.statusValvula = Boolean(await this.EVServ.getstatusValvula(this.dispositivos.electrovalvulaId.toString()));
   } catch (error) {
-    this.onEVError = true;
+    this.onErrorEV = true;
   }
 }
 }
 
   changeStatusValvula() {
     // Cambiar el estado de la válvula
-    this.estadoValvula = !this.estadoValvula;
+    this.statusValvula = !this.statusValvula;
   
     // Crear un registro de log
     const now = new Date();
-    const log: Logs = new Logs(0, Number(this.estadoValvula), now, this.dispositivos.electrovalvulaId);
-    this.lSrv.addLog(log);
+    const log: Logs = new Logs(0, Number(this.statusValvula), now, this.dispositivos.electrovalvulaId);
+    this.logServ.addLog(log);
   
     // Si la válvula se apaga
-    if (!this.estadoValvula) {
+    if (!this.statusValvula) {
       // Generar un nuevo valor aleatorio para la medición
       const newMedicion = this.getAleatorio(0, 100);
   
@@ -110,7 +113,7 @@ export class DispositivosPage implements OnInit {
       const med: Mediciones = new Mediciones(0, now, newMedicion, this.dispositivos.dispositivoId);
   
       // Agregar la medición
-      this.medSrv.addMediciones(med).then(() => {
+      this.medSer.addMediciones(med).then(() => {
         // Actualizar el valor de la gráfica con la nueva medición
         this.chartValue = Number(newMedicion);
         this.updateChart();
@@ -138,7 +141,7 @@ export class DispositivosPage implements OnInit {
       ],
     });
   }
-
+// Generacion de Gauge
   generateChart() {
     this.chartOptions = {
       chart: {
@@ -147,7 +150,6 @@ export class DispositivosPage implements OnInit {
         plotBackgroundImage: null,
         plotBorderWidth: 0,
         plotShadow: false,
-        height: '300px',
       },
       title: {
         text: [this.chartName],

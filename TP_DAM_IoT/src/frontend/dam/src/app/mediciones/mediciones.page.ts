@@ -4,6 +4,7 @@ import { DispositivoService } from '../services/dispositivo.service';
 import { MedicionesService } from '../services/mediciones.service';
 import { Dispositivos } from '../interfaces/dispositivos';
 import { Mediciones } from '../interfaces/mediciones';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-mediciones',
@@ -18,7 +19,7 @@ public dispositivoId!: string;
 public med!: Array<Mediciones>;
   
 
-constructor(private router: ActivatedRoute, private dServ: DispositivoService, private medServ: MedicionesService) { }
+constructor(private router: ActivatedRoute, private dServ: DispositivoService, private medServ: MedicionesService, private location: Location) { }
 
 
   ngOnInit() {
@@ -34,5 +35,8 @@ constructor(private router: ActivatedRoute, private dServ: DispositivoService, p
       });
     }
   }
-
+  goBack() {
+    this.location.back();
+  }
+  
 }

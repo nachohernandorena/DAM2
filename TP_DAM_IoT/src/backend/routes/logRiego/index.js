@@ -12,7 +12,6 @@ routerLogRiego.get('/:id/all', function (req, res) {
             res.send(("Error" + electrovalvulaId ).status(400))
             return;
         }
-        // rows fetch
         console.log(data[0]);
         res.send(JSON.stringify(data[0])).status(200);
     });
