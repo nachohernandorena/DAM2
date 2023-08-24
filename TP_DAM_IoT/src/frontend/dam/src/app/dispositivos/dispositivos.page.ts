@@ -23,24 +23,22 @@ export class DispositivosPage implements OnInit {
   public dispositivoId: string = '';
   public dispositivos: Dispositivos = new Dispositivos(0, '', '', 0);
   public myChart: any;
-  public mediciones!: Mediciones[]; 
+  public mediciones!: Mediciones[];
   public statusValvula = false;
   private chartOptions: any;
   private chartValue = 0;
   private chartName = '';
   public onError: boolean = false;
-  public onErrorEV: boolean= false;
-
+  public onErrorEV: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private dispService: DispositivoService,
     private medSer: MedicionesService,
     private EVServ: ElectrovalvulaService,
-    private logServ: LogsService,
-  ) {
+    private logServ: LogsService
+  ) {}
 
-  }
   ionViewWillEnter() {
     this.generateChart();
     this.getDispositivosData();
@@ -53,68 +51,62 @@ export class DispositivosPage implements OnInit {
     this.chartName = '';
   }
 
-  async ngOnInit() {}
+  ngOnInit() {}
 
   async getDispositivosData() {
     const dispositivoId = this.route.snapshot.paramMap.get('id');
-    console.log('Valor de dispositivoId:', dispositivoId);
-    
- // Comprobamos si dispositivoId no es null
- if (dispositivoId !== null) {
-  try {
-    this.onError = false;
 
-    // Obtener información del dispositivo
-    const dispositivos = await this.dispService.getDispositivo(dispositivoId);
-    this.dispositivos = dispositivos;
+    if (dispositivoId !== null) {
+      try {
+        this.onError = false;
 
-    // Obtener mediciones asociadas al dispositivo
-    const mediciones = await this.medSer.getMediciones(dispositivoId);
-    const lastMedicionIndex = mediciones.length - 1;
+          const [dispositivos, mediciones] = await Promise.all([
+          this.dispService.getDispositivo(dispositivoId),
+          this.medSer.getMediciones(dispositivoId)
+        ]);
 
-    if (mediciones) {
-      this.mediciones = mediciones;
-      this.chartName = String(this.dispositivos.nombre);
-      this.chartValue = mediciones[lastMedicionIndex].valor; 
-      this.updateChart();
-    } else {
-      this.updateChart();
+        this.dispositivos = dispositivos;
+
+        if (mediciones) {
+          this.mediciones = mediciones;
+          const lastMedicionIndex = mediciones.length - 1;
+          this.chartName = String(dispositivos.nombre);
+          this.chartValue = mediciones[lastMedicionIndex].valor;
+          this.updateChart();
+        } else {
+          this.updateChart();
+        }
+      } catch (error) {
+        this.onError = true;
+      }
+
+      try {
+        this.onErrorEV = false;
+       
+        this.statusValvula = Boolean(
+          await this.EVServ.getstatusValvula(
+            this.dispositivos.electrovalvulaId.toString()
+          )
+        );
+      } catch (error) {
+        this.onErrorEV = true;
+      }
     }
-  } catch (error) {
-    this.onError = true;
   }
-  // Intentar obtener el estado de la válvula
-  try {
-    this.onErrorEV = false;
-
-    // Convertir el estado de la válvula a booleano y asignarlo astatusValvula
-    this.statusValvula = Boolean(await this.EVServ.getstatusValvula(this.dispositivos.electrovalvulaId.toString()));
-  } catch (error) {
-    this.onErrorEV = true;
-  }
-}
-}
 
   changeStatusValvula() {
-    // Cambiar el estado de la válvula
     this.statusValvula = !this.statusValvula;
-  
-    // Crear un registro de log
+
     const now = new Date();
-    const log: Logs = new Logs(0, Number(this.statusValvula), now, this.dispositivos.electrovalvulaId);
+    const log: Logs = new Logs(0,Number(this.statusValvula),now,this.dispositivos.electrovalvulaId);
     this.logServ.addLog(log);
-  
-    // Si la válvula se apaga
+
     if (!this.statusValvula) {
-      // Generar un nuevo valor aleatorio para la medición
       const newMedicion = this.getAleatorio(0, 100);
-  
-      // Crear una nueva medición
-      const med: Mediciones = new Mediciones(0, now, newMedicion, this.dispositivos.dispositivoId);
-  
-      // Agregar la medición
+
+      const med: Mediciones = new Mediciones(0,now,newMedicion,this.dispositivos.dispositivoId);
+
       this.medSer.addMediciones(med).then(() => {
-        // Actualizar el valor de la gráfica con la nueva medición
         this.chartValue = Number(newMedicion);
         this.updateChart();
       });
@@ -132,7 +124,7 @@ export class DispositivosPage implements OnInit {
       },
       series: [
         {
-          name: 'kPA',
+          name: 'Medicion',
           data: [Number(this.chartValue)],
           tooltip: {
             valueSuffix: ' kPA',

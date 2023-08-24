@@ -2,6 +2,7 @@ const express = require('express')
 const routerDispositivo = express.Router()
 var pool = require('../../mysql-connector');
 
+// Obtener todos los dispositivos
 routerDispositivo.get('/', function(req, res) {
     pool.query('Select * from Dispositivos', function(err, result, fields) {
         if (err) {
@@ -12,6 +13,7 @@ routerDispositivo.get('/', function(req, res) {
     });
 })
 
+// Obtener un dispositivo específico por su ID
 routerDispositivo.get('/:id', function(req, res) {
     let deviceID = req.params.id;
     let query = 'SELECT * FROM Dispositivos WHERE dispositivoId =?';

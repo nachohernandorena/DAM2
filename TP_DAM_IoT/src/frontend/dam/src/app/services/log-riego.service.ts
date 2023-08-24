@@ -20,11 +20,10 @@ export class LogsService {
       .toPromise()
       .then((logRiegoResponse: Object | undefined) => {
         if (logRiegoResponse) {
-          // Suponiendo que necesitas transformar el objeto response en un arreglo de Logs
           const logs: Logs[] = logRiegoResponse as Logs[];
           return logs;
         } else {
-          return []; // Devuelve un arreglo vacío en caso de respuesta vacía o undefined
+          return [];
         }
       });
   }

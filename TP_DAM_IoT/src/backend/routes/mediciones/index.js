@@ -2,6 +2,8 @@ const express = require('express')
 const routerMediciones = express.Router()
 var pool = require('../../mysql-connector');
 
+
+// Obtener todas la medicion mas reciente de un sensor 
 routerMediciones.get('/:id', function(req, res, next) {
     pool.query(
         'SELECT * FROM Mediciones m WHERE m.medicionId = (SELECT MAX(medicionId) FROM Mediciones WHERE dispositivoId = ?)',
@@ -17,6 +19,7 @@ routerMediciones.get('/:id', function(req, res, next) {
 });
 
 
+// Asignar medicion a un sensor
 routerMediciones.post('/add', function(req, res, next) {
     pool.query('INSERT INTO `Mediciones` (`fecha`, `valor`, `dispositivoId`) VALUES (?, ?, ?)',
         [req.body.fecha, req.body.valor, req.body.dispositivoId],
@@ -30,7 +33,7 @@ routerMediciones.post('/add', function(req, res, next) {
     );
 });
 
-//todas las mediciones de un sensor
+// Obtener todas las mediciones de un sensor
 routerMediciones.get('/:id/all', function(req, res, next) {
     pool.query('SELECT * FROM Mediciones WHERE dispositivoId = ?',req.params.id,
         function(err, rta, field) {
