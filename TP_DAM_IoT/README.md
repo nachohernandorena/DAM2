@@ -31,17 +31,18 @@ Si pudiste acceder al cliente web y al administrador significa que la aplicació
 
 ### Sobre la aplicación
 
-En esta aplicacion vas a poder ver la información de los sensores de riego en la pantalla principal o home:
+En esta aplicación vas a poder ver la información de los sensores de riego en la pantalla principal o home:
 
 ![home](doc/home.png)
 
-Al entrar en alguno de los sensores veras la información de la ultima medicion del dispositivo en el gauge o indicador: 
+Al entrar en alguno de los sensores veras la información de la última medición del dispositivo en el gauge o indicador: 
 
 ![dispositivo](doc/dispositivo.png)
 
 La interpretación de la lectura del indicador varía según el cultivo, el tipo de suelo y curva de humedad correlacionada. Sin embargo, se puede tomar de referencia que de 0 a 10 centibares (Cb) el suelo está saturado; de 10 a 30 Cb, el suelo está en CC; y, de 30 a 60 Cb, el suelo está seco y debe regarse de inmediato.
 
 > 👁️ Si no te carga el Gauge o Indicador prueba `docker compose down` y luego `docker compose up` para levantar nuevamente la aplicación. O simplemente refrescá la página con F5.
+
 
 Desde el menú del dispositivo se puede abrir y cerrar la electroválvula del dispositivo :
 
